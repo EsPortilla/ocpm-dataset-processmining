@@ -120,6 +120,73 @@ Every event includes the batch's assigned production line for complete traceabil
 - **Hormonals:** EE30TAB, LEVOHORMIMPL
 - **Devices:** INSUPEN, INHALER
 
+## Activity Catalog
+
+### Planning & Release (Area: Planning)
+- **Plan Batch** - Initial batch planning and scheduling based on demand
+- **Release Batch** - Authorization to begin manufacturing operations
+- **Batch Cancelled (Material Issue)** - Early termination due to material unavailability or issues
+
+### Material Staging (Area: Warehouse)
+- **Stage Materials** - Preparation and staging of raw materials and excipients for production
+- **Stage Components** - Preparation and staging of device components for assembly
+
+### Manufacturing - Solids: Tablets & Capsules (Area: Production)
+- **Start Granulation** - Begin granulation process for solid dosage forms
+- **End Granulation** - Complete granulation process
+- **Start Compression** - Begin tablet compression or capsule filling
+- **End Compression** - Complete compression or filling operation
+- **Start Coating** - Begin coating process for tablets/capsules
+- **End Coating** - Complete coating operation
+- **Start Packaging** - Begin primary and secondary packaging
+- **End Packaging** - Complete packaging operation
+
+### Manufacturing - Injectables (Area: Production)
+- **Start Solution Preparation** - Begin preparation of injectable solution
+- **End Solution Preparation** - Complete solution preparation
+- **Sterile Filtration** - Sterile filtration of prepared solution
+- **Start Filling** - Begin aseptic filling of vials/syringes
+- **End Filling** - Complete filling operation
+- **Capping** - Seal vials/syringes with caps or stoppers
+- **Lyophilization** - Freeze-drying process for lyophilized products
+- **Visual Inspection** - Manual or automated visual inspection for defects
+
+### Manufacturing - Hormonals (Area: Production)
+- **Segregated Area Cleaning** - Pre-production cleaning of dedicated hormonal area
+- **Extended QA Review** - Additional quality review for hormonal products
+
+### Manufacturing - Devices (Area: Production)
+- **Start Component Assembly** - Begin assembly of device components
+- **End Component Assembly** - Complete component assembly
+- **Start Device Calibration** - Begin calibration and functional testing
+- **End Device Calibration** - Complete calibration process
+- **Final Assembly** - Final device assembly and integration
+- **IFU Insertion Check** - Verification of Instructions For Use insertion
+
+### Quality Control (Area: QC_Lab)
+- **QC FP Sampling** - Final product sampling for quality testing
+- **QC IPC Sampling** - In-process control sampling during manufacturing
+- **QC Result (Conforming)** - Test results meet specifications
+- **QC Result (OOS)** - Test results out of specification (OOS)
+
+### Quality Assurance (Area: QA)
+- **QP Decision (Release)** - Qualified Person authorizes batch release
+- **QP Decision (Reject)** - Qualified Person rejects batch
+- **Extended QA Review** - Additional QA review for complex issues
+
+### Deviation Management (Area: QA)
+- **Deviation Opened** - Initiation of deviation investigation
+- **Investigation** - Root cause analysis and investigation activities
+- **Deviation Closed** - Closure of deviation with approved corrective actions
+
+### Maintenance (Area: Maintenance)
+- **Equipment Downtime** - Unplanned equipment failure or breakdown
+- **Preventive Maintenance** - Scheduled preventive maintenance activities
+
+### Rework (Area: Production)
+- **Start Rework** - Begin rework operations to address quality issues
+- **End Rework** - Complete rework operations
+
 ## Process Mining Suitability
 
 This dataset is suitable for:
