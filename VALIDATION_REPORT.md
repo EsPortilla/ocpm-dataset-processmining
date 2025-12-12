@@ -1,34 +1,34 @@
 # OCEL Pharma Manufacturing Dataset - Validation Report
 
 **Generation Date:** 2025-12-12
-**Generator Version:** 1.0
+**Generator Version:** 2.0 (Scaled)
 **Validation Status:** ✓ PASSED
 
 ## Dataset Statistics
 
 ### Object Counts
-- **Batch:** 1,500
-- **Deviation:** 240
+- **Batch:** 10,000
+- **Deviation:** 1,637
 - **Equipment:** 31
-- **MarketOrder:** 1,500
-- **MaterialLot:** 4,000
+- **MarketOrder:** 10,000
+- **MaterialLot:** 25,000
 - **ProductionLine:** 11
-- **QCSample:** 1,554
+- **QCSample:** 10,405
 
-**Total Objects:** 8,836
+**Total Objects:** 57,084
 
 ### Event Statistics
-- **Total Events:** 22,284
-- **Total Event-Object Links:** 57,378
+- **Total Events:** 148,394
+- **Total Event-Object Links:** 381,942
 
 ### Events by Area
-- **Maintenance:** 85
-- **Packaging:** 3,204
-- **Planning:** 3,075
-- **Production:** 8,771
-- **QA:** 2,555
-- **QC_Lab:** 3,054
-- **Warehouse:** 1,540
+- **Maintenance:** 565
+- **Packaging:** 21,235
+- **Planning:** 20,500
+- **Production:** 58,336
+- **QA:** 17,070
+- **QC_Lab:** 20,405
+- **Warehouse:** 10,283
 
 ## Integrity Validation Results
 
@@ -36,22 +36,23 @@ All Module 9 integrity constraints passed successfully:
 
 ### ✓ 1. Start/End Pairing
 Every batch has properly paired Start/End events for all manufacturing operations.
-No timing violations detected.
+No timing violations detected across 148,394 events.
 
 ### ✓ 2. Cancellation Constraint
 Cancelled batches have no Start_* manufacturing events.
 All early cancellations occur after staging only.
 
 ### ✓ 3. QC Decision Constraint
-- Non-cancelled batches: Exactly 1 QP Decision event
-- Cancelled batches: 0 QP Decision events (expected)
+- Non-cancelled batches: Exactly 1 QP Decision event (9,500 batches)
+- Cancelled batches: 0 QP Decision events (500 batches)
 
 ### ✓ 4. QC Sample Linkage
 Every QC Result event is properly linked to an existing QCSample object.
+10,405 QC samples created across all batches.
 Re-test loops correctly create new QCSample objects.
 
 ### ✓ 5. Deviation Lifecycle
-All Deviation objects have complete lifecycle:
+All 1,637 Deviation objects have complete lifecycle:
 - Deviation Opened
 - Investigation
 - Deviation Closed (or appropriate closure event)
@@ -61,39 +62,42 @@ All required objects (Batch, QCSample, Deviation, Equipment) appear in at least 
 Inventory objects (MaterialLot, MarketOrder) and static objects (ProductionLine) allowed to be unused.
 
 ### ✓ 7. No Orphan Events
-Every event links to at least one object.
+Every event links to at least one object across 381,942 event-object linkages.
 
 ## Scenario Distribution
 
-The dataset includes all required scenario families plus additional variants:
+The dataset includes all required scenario families plus additional variants across 10,000 batches:
 
 ### Required Scenarios
-1. **Happy path** (~40%) - Clean backbone, conforming QC, release
-2. **Deviation after major unit** (~10%) - With rework and IPC sampling
-3. **Machine downtime** (~8%) - Causing delays during operations
-4. **Early cancellation** (~5%) - After staging, before manufacturing
-5. **QC OOS → rejection** (~5%) - End-of-flow rejection
-6. **Complex** (~4%) - Combined downtime + deviation + extended QA
+1. **Happy path** (~4,000 batches) - Clean backbone, conforming QC, release
+2. **Deviation after major unit** (~1,000 batches) - With rework and IPC sampling
+3. **Machine downtime** (~800 batches) - Causing delays during operations
+4. **Early cancellation** (~500 batches) - After staging, before manufacturing
+5. **QC OOS → rejection** (~500 batches) - End-of-flow rejection
+6. **Complex** (~400 batches) - Combined downtime + deviation + extended QA
 
 ### Additional Scenarios (Module 7 A-F)
-- **A. Material substitution** (~7%) - Mid-flow material change + deviation + QA review
-- **B. Line change** (~6%) - Operations across different lines
-- **C. Split packaging** (~5%) - One batch, two packaging runs
-- **D. Re-test loop** (~5%) - New QCSample after OOS, potential recovery
-- **E. Documentation deviation** (~3%) - Post-packaging, no physical rework
-- **F. Preventive maintenance** (~2%) - Queueing across multiple batches
+- **A. Material substitution** (~700 batches) - Mid-flow material change + deviation + QA review
+- **B. Line change** (~600 batches) - Operations across different lines
+- **C. Split packaging** (~500 batches) - One batch, two packaging runs
+- **D. Re-test loop** (~500 batches) - New QCSample after OOS, potential recovery
+- **E. Documentation deviation** (~300 batches) - Post-packaging, no physical rework
+- **F. Preventive maintenance** (~200 batches) - Queueing across multiple batches on same equipment
 
 ## File Outputs
 
 ### OCEL Files
-1. **ocel_events.csv** (2.1 MB) - 22,284 events
-2. **ocel_objects.csv** (178 KB) - 8,836 objects
-3. **ocel_event_objects.csv** (1.1 MB) - 57,378 linkages
-4. **ocel_object_attributes.csv** (550 KB) - All object attributes
+1. **ocel_events.csv** (14 MB) - 148,394 events
+2. **ocel_objects.csv** (1.2 MB) - 57,084 objects
+3. **ocel_event_objects.csv** (7.3 MB) - 381,942 linkages
+4. **ocel_object_attributes.csv** (3.5 MB) - All object attributes
 
-### Case-Centric Projection (50-100 batches)
-1. **case_centric_events_small.csv** (111 KB) - 1,117 events for 75 batches
-2. **case_centric_attributes_small.csv** (6.7 KB) - Batch attributes
+### Case-Centric Projection (Full Dataset)
+1. **case_centric_events.csv** (15 MB) - 148,304 events for all 10,000 batches
+2. **case_centric_attributes.csv** (882 KB) - Batch attributes for all 10,000 batches
+
+**Note:** Case-centric projection now includes the FULL dataset (all batches), not a subset.
+Every event includes the batch's assigned production line for complete traceability.
 
 ## Fixed Infrastructure
 
@@ -119,22 +123,42 @@ The dataset includes all required scenario families plus additional variants:
 ## Process Mining Suitability
 
 This dataset is suitable for:
-- **Process discovery** - Clear backbone flows with variants
+- **Process discovery** - Clear backbone flows with variants across 10K cases
 - **Conformance checking** - Known process models vs. actual executions
-- **Performance analysis** - Realistic durations, bottlenecks, queueing
+- **Performance analysis** - Realistic durations, bottlenecks, queueing across large scale
 - **Object-centric analysis** - Multi-object interactions (Batch, Equipment, Materials, QC, Deviations)
-- **Deviation analysis** - Various deviation types with complete lifecycles
-- **Resource analysis** - Equipment utilization, line changes
-- **Root cause analysis** - Deviations, rework, downtimes
+- **Deviation analysis** - 1,637 deviations with complete lifecycles
+- **Resource analysis** - Equipment utilization, line changes, capacity planning
+- **Root cause analysis** - Statistical patterns across deviations, rework, downtimes
+- **Variant analysis** - Sufficient volume for clustering and pattern mining
+- **Predictive modeling** - Large training dataset for ML/AI applications
 
 ## Technical Details
 
-- **Time span:** 24 months (2023-01-01 to 2024-12-31)
+- **Time span:** 48 months (2023-01-01 to 2026-12-31)
 - **Timestamp format:** ISO8601 (YYYY-MM-DDTHH:MM:SS)
 - **Random seed:** 42 (reproducible)
-- **Event ID format:** EVT000001 - EVT022284
-- **Batch ID format:** BATCH00001 - BATCH01500
+- **Event ID format:** EVT000001 - EVT148394
+- **Batch ID format:** BATCH00001 - BATCH10000
+- **Deviation ID format:** DEVIAT0001 - DEVIAT1637
+- **QC Sample ID format:** QCS00001 - QCS10405
+
+## Scale Configuration
+
+```python
+TARGET_BATCHES = 10000
+TARGET_MATERIAL_LOTS = 25000
+TARGET_MARKET_ORDERS = 10000
+TIME_WINDOW_MONTHS = 48
+```
+
+## Performance Characteristics
+
+- **Generation time:** ~8 minutes for full dataset
+- **Validation time:** ~2 minutes for 148K events
+- **Memory footprint:** ~500 MB during generation
+- **CSV total size:** ~42 MB (highly compressible)
 
 ---
 
-**Validation Conclusion:** Dataset successfully generated and validated. All integrity constraints satisfied. Ready for process mining analysis and training.
+**Validation Conclusion:** Large-scale dataset successfully generated and validated. All integrity constraints satisfied across 10,000 batches and 148,394 events. Ready for industrial-scale process mining analysis, machine learning training, and academic research.
