@@ -14,6 +14,12 @@ import os
 # Set random seed for reproducibility
 random.seed(42)
 
+# Dataset scale parameters
+TARGET_BATCHES = 10000
+TARGET_MATERIAL_LOTS = 25000
+TARGET_MARKET_ORDERS = 10000
+TIME_WINDOW_MONTHS = 48  # Extended to spread batches more realistically
+
 # Module 2: Fixed Infrastructure
 PLANTS = {
     'PLANT_SOLIDS': ['TL1', 'TL2', 'TL3', 'CL1', 'CL2'],
@@ -107,7 +113,7 @@ object_attributes = []
 
 # Start date: 2023-01-01
 START_DATE = datetime(2023, 1, 1, 8, 0, 0)
-END_DATE = START_DATE + timedelta(days=730)  # 24 months
+END_DATE = START_DATE + timedelta(days=TIME_WINDOW_MONTHS * 30)  # Configurable months
 
 
 def generate_event_id():
@@ -1575,16 +1581,16 @@ def write_case_centric_files(case_events, case_attributes):
     """Write case-centric CSV files"""
     print("Writing case-centric projection files...")
 
-    # case_centric_events_small.csv
-    with open('case_centric_events_small.csv', 'w', newline='', encoding='utf-8') as f:
+    # case_centric_events.csv
+    with open('case_centric_events.csv', 'w', newline='', encoding='utf-8') as f:
         fieldnames = ['case_id', 'activity', 'event_start', 'event_end', 'timestamp', 'line', 'area']
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(case_events)
 
-    # case_centric_attributes_small.csv
+    # case_centric_attributes.csv
     if case_attributes:
-        with open('case_centric_attributes_small.csv', 'w', newline='', encoding='utf-8') as f:
+        with open('case_centric_attributes.csv', 'w', newline='', encoding='utf-8') as f:
             all_keys = set()
             for ca in case_attributes:
                 all_keys.update(ca.keys())
@@ -1597,8 +1603,8 @@ def write_case_centric_files(case_events, case_attributes):
             writer.writeheader()
             writer.writerows(case_attributes)
 
-    print("  - case_centric_events_small.csv")
-    print("  - case_centric_attributes_small.csv")
+    print("  - case_centric_events.csv")
+    print("  - case_centric_attributes.csv")
 
 
 def main():
@@ -1611,8 +1617,8 @@ def main():
     print("Creating static objects...")
     create_production_lines()
     equipment_list = create_equipment()
-    material_lots = create_material_lots(4000)
-    market_orders = create_market_orders(1500)
+    material_lots = create_material_lots(TARGET_MATERIAL_LOTS)
+    market_orders = create_market_orders(TARGET_MARKET_ORDERS)
 
     print(f"  - ProductionLines: {len(LINE_TO_PLANT)}")
     print(f"  - Equipment: {len(equipment_list)}")
@@ -1623,7 +1629,7 @@ def main():
     # Generate batches
     print("Generating batches and events...")
     batch_gen = BatchGenerator(material_lots, market_orders, equipment_list)
-    batch_ids = generate_batches(batch_gen, 1500)
+    batch_ids = generate_batches(batch_gen, TARGET_BATCHES)
     print(f"Generated {len(batch_ids)} batches")
     print()
 
@@ -1637,8 +1643,8 @@ def main():
     write_csv_files()
     print()
 
-    # Generate and write case-centric projection
-    case_events, case_attributes = generate_case_centric_projection(75)
+    # Generate and write case-centric projection (full dataset)
+    case_events, case_attributes = generate_case_centric_projection(len(batch_ids))
     write_case_centric_files(case_events, case_attributes)
     print()
 
