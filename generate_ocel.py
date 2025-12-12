@@ -1480,6 +1480,13 @@ def generate_case_centric_projection(num_cases=75):
     for eo in event_objects:
         event_to_objects[eo['event_id']].append(eo['object_id'])
 
+    # Get batch attributes first (needed for line fallback)
+    batch_attr_dict = {}
+    for oa in object_attributes:
+        obj_type = next((o['object_type'] for o in objects if o['object_id'] == oa['object_id']), None)
+        if obj_type == 'Batch' and oa['object_id'] in selected_batch_ids:
+            batch_attr_dict[oa['object_id']] = oa
+
     # Collect events for selected batches
     case_events = []
     for e in events:
@@ -1487,11 +1494,16 @@ def generate_case_centric_projection(num_cases=75):
         batch_ids = [o for o in linked_objs if o in selected_batch_ids]
 
         if batch_ids:
-            # Get line info
+            # Get line info from event linkage
             line_objs = [o for o in linked_objs if o in LINE_TO_PLANT]
-            line = line_objs[0] if line_objs else ''
 
             for batch_id in batch_ids:
+                # Use line from event if present, otherwise use batch's assigned line
+                if line_objs:
+                    line = line_objs[0]
+                else:
+                    line = batch_attr_dict.get(batch_id, {}).get('line', '')
+
                 case_events.append({
                     'case_id': batch_id,
                     'activity': e['activity'],
@@ -1504,13 +1516,6 @@ def generate_case_centric_projection(num_cases=75):
 
     # Sort by case_id and timestamp
     case_events.sort(key=lambda x: (x['case_id'], x['event_start']))
-
-    # Get batch attributes
-    batch_attr_dict = {}
-    for oa in object_attributes:
-        obj_type = next((o['object_type'] for o in objects if o['object_id'] == oa['object_id']), None)
-        if obj_type == 'Batch' and oa['object_id'] in selected_batch_ids:
-            batch_attr_dict[oa['object_id']] = oa
 
     case_attributes = []
     for batch_id in selected_batch_ids:
